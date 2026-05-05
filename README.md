@@ -1,6 +1,6 @@
-# 📊 MSR Tool – Análise de Manutenibilidade
+# MSR Tool – Análise de Manutenibilidade
 
-## 👥 Integrantes
+## Integrantes
 
 - Gustavo Amaral Bernardino  
 - João Vitor Soares Santos  
@@ -9,7 +9,7 @@
 
 ---
 
-## 🎯 Objetivo
+## Objetivo
 
 Desenvolver uma ferramenta de linha de comando para identificar problemas reais de manutenção em repositórios Python, combinando análise de código com histórico de commits.
 
@@ -17,13 +17,13 @@ O foco não é apenas coletar métricas, mas apontar onde estão os riscos de ev
 
 ---
 
-## ❗ Recorte do Problema
+## Recorte do Problema
 
 Em vez de analisar tudo de forma superficial, o projeto foca em um problema específico:
 
 > Quais arquivos do sistema são mais difíceis de manter e por quê?
 
-Para responder isso, vamos investigar três sinais principais:
+Para responder isso, serão investigados três sinais principais:
 
 - Complexidade do código  
 - Frequência de mudanças  
@@ -35,7 +35,7 @@ Hipótese:
 
 ---
 
-## 🧠 Abordagem Proposta
+## Abordagem Proposta
 
 A ferramenta será dividida em três etapas:
 
@@ -76,7 +76,7 @@ Os dados serão combinados para identificar:
 
 ---
 
-## ⚙️ Decisões de Projeto
+## Decisões de Projeto
 
 ### Linguagem: Python
 Permite integração direta com ferramentas de análise e parsing (AST), além de simplificar o desenvolvimento.
@@ -99,7 +99,7 @@ Uso de Typer para criar uma ferramenta simples e automatizável.
 
 ### Escopo inicial reduzido
 
-Não vamos analisar tudo (issues, PRs, CI etc.) neste momento.
+Não serão analisados, neste momento, artefatos como issues, pull requests ou pipelines de CI/CD.
 
 Foco em:
 
@@ -108,7 +108,7 @@ Foco em:
 
 ---
 
-## 📊 Saída Esperada
+## Saída Esperada
 
 ### Terminal
 
