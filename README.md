@@ -2,9 +2,10 @@
 
 ## 1. Membros do Grupo
 
+* Gustavo Amaral Bernardino
+* João Vitor Soares Santos
 * Luis Felipe Belasco Silva
 * Lean Henrique Pereira Miranda
-* placeholder
 
 
 ## 2. Explicação do Sistema
