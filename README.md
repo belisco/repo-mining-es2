@@ -51,10 +51,17 @@ Uso do PyDriller para coletar:
 
 ### 2. Análise de código
 
-Aplicação de métricas estruturais:
+Aplicação de métricas estruturais e de qualidade:
 
 - Complexidade ciclomática (Radon)  
-- Linhas de código (CLOC)  
+- Linhas de código – LOC (CLOC)  
+- Número de funções e métodos por arquivo  
+- Tamanho médio das funções (LOC por função)  
+- Profundidade de aninhamento (nesting)  
+- Número de parâmetros por função  
+- Índice de manutenibilidade (Maintainability Index – Radon)  
+- Densidade de comentários (comentários / LOC)  
+- Número de classes e grau de acoplamento estrutural (importações entre módulos)  
 
 ---
 
@@ -65,6 +72,7 @@ Os dados serão combinados para identificar:
 - Hotspots (arquivos muito alterados)  
 - Arquivos complexos  
 - Arquivos críticos (interseção dos dois)  
+- Acoplamento lógico (arquivos frequentemente modificados juntos em commits)  
 
 ---
 
