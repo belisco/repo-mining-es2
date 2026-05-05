@@ -1,31 +1,108 @@
-# TP: Mineração de Repositórios de Software
+# 📊 MSR Tool – Análise de Manutenibilidade
 
-## 1. Membros do Grupo
+## 👥 Integrantes
 
-* Gustavo Amaral Bernardino
-* João Vitor Soares Santos
-* Luis Felipe Belasco Silva
-* Lean Henrique Pereira Miranda
+- Gustavo Amaral Bernardino  
+- João Vitor Soares Santos  
+- Luis Felipe Belasco Silva  
+- Lean Henrique Pereira Miranda  
 
+---
 
-## 2. Explicação do Sistema
+## 🎯 Objetivo
 
-O sistema consiste em uma ferramenta de linha de comando voltada para a mineração de repositórios de software, com o objetivo de identificar possíveis problemas de manutenção.
+Desenvolver uma ferramenta de linha de comando para identificar problemas reais de manutenção em repositórios Python, combinando análise de código com histórico de commits.
 
-A aplicação analisa dados provenientes de repositórios Git ou GitHub, considerando diferentes artefatos como commits, código-fonte, issues, pull requests e histórico de alterações. A partir dessas informações, o sistema extrai métricas e padrões que podem indicar problemas como alta complexidade, baixa qualidade de código ou riscos de manutenção.
+O foco não é apenas coletar métricas, mas apontar onde estão os riscos de evolução do software.
 
-Os resultados são apresentados de forma estruturada, podendo incluir métricas quantitativas e visualizações que auxiliam na análise do estado do software.
+---
 
+## ❗ Recorte do Problema
 
-## 3. Tecnologias Utilizadas
+Em vez de analisar tudo de forma superficial, o projeto foca em um problema específico:
 
-Inicialmente, pensamos em avaliar repositorios em python, então separamos algumas opções que parecem encaixar com o que pensamos nesse primeiro momento:
+> Quais arquivos do sistema são mais difíceis de manter e por quê?
 
-* **Mineração de repositórios**: PyDriller e GitPython
-* **Integração com GitHub**: PyGithub, GitHub REST API
-* **Interface de linha de comando (CLI)**: Typer ou argparse
-* **Análise de código (parsers)**: Python AST
-* **Análise de histórico**: PyDriller, CodeShovel e GitEvo
-* **Métricas de software**: Lizard, Radon, CLOC
-* **Qualidade de código**: Flake8
-* **Segurança**: Bandit
+Para responder isso, vamos investigar três sinais principais:
+
+- Complexidade do código  
+- Frequência de mudanças  
+- Volume de alterações (code churn)  
+
+Hipótese:
+
+> Arquivos complexos que mudam com frequência tendem a ser os principais gargalos de manutenção.
+
+---
+
+## 🧠 Abordagem Proposta
+
+A ferramenta será dividida em três etapas:
+
+### 1. Extração de histórico
+
+Uso do PyDriller para coletar:
+
+- Commits  
+- Arquivos modificados  
+- Linhas adicionadas/removidas  
+
+---
+
+### 2. Análise de código
+
+Aplicação de métricas estruturais:
+
+- Complexidade ciclomática (Radon)  
+- Linhas de código (CLOC)  
+
+---
+
+### 3. Correlação
+
+Os dados serão combinados para identificar:
+
+- Hotspots (arquivos muito alterados)  
+- Arquivos complexos  
+- Arquivos críticos (interseção dos dois)  
+
+---
+
+## ⚙️ Decisões de Projeto
+
+### Linguagem: Python
+Permite integração direta com ferramentas de análise e parsing (AST), além de simplificar o desenvolvimento.
+
+---
+
+### Fonte de dados: Git (local)
+Optamos inicialmente por repositórios locais para:
+
+- evitar dependência de API  
+- reduzir complexidade  
+- focar na análise  
+
+---
+
+### Interface: CLI
+Uso de Typer para criar uma ferramenta simples e automatizável.
+
+---
+
+### Escopo inicial reduzido
+
+Não vamos analisar tudo (issues, PRs, CI etc.) neste momento.
+
+Foco em:
+
+- código  
+- commits  
+
+---
+
+## 📊 Saída Esperada
+
+### Terminal
+
+```text
+payment.py → Complexidade alta + muitas mudanças → RISCO ALTO
