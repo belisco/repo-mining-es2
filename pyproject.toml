@@ -1,0 +1,42 @@
+[project]
+name = "repo-mining-es2"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Gustavo Amaral Bernardino",email = "gu.amaralb@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.14,<4.0"
+dependencies = [
+    "pydriller (>=2.9,<3.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "taskipy (>=1.14.1,<2.0.0)",
+    "ruff (>=0.15.16,<0.16.0)"
+]
+
+[tool.ruff]
+line-length = 79
+extend-exclude = ['migrations']
+
+[tool.ruff.lint]
+preview = true
+select = ['I', 'F', 'E', 'W', 'PL', 'PT', 'FAST']
+
+[tool.ruff.format]
+preview = true
+quote-style = 'single'
+
+
+[tool.taskipy.tasks]
+pre_format = {cmd = "poetry run ruff check --fix"}
+format = {cmd = "poetry run ruff format"}
+pre_run = {cmd = "poetry run task format"}
+run = { cmd = "poetry run python3 repo_mining_es2/main.py buscar --name https://github.com/pytest-dev/pytest.git" }
