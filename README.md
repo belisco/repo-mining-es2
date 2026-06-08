@@ -1,116 +1,106 @@
-# MSR Tool – Análise de Manutenibilidade
+# MSR Tool – Análise de Manutenibilidade de Repositórios
 
 ## Integrantes
 
-- Gustavo Amaral Bernardino  
-- João Vitor Soares Santos  
-- Luis Felipe Belasco Silva  
-- Lean Henrique Pereira Miranda  
+- Gustavo Amaral Bernardino
+- João Vitor Soares Santos
+- Luis Felipe Belasco Silva
+- Lean Henrique Pereira Miranda
 
 ---
 
 ## Objetivo
 
-Desenvolver uma ferramenta de linha de comando para identificar problemas reais de manutenção em repositórios Python, combinando análise de código com histórico de commits.
+MSR Tool é uma ferramenta de linha de comando para identificar problemas reais de manutenção em repositórios Python. Ela combina análise estática de código com histórico de commits para responder: **quais arquivos são mais difíceis de manter e por quê?**
 
-O foco não é apenas coletar métricas, mas apontar onde estão os riscos de evolução do software.
+A ferramenta cruza três sinais para detectar riscos de evolução:
 
----
+- **Complexidade do código** – via complexidade ciclomática e índice de manutenibilidade
+- **Frequência de mudanças** – quantas vezes cada arquivo foi modificado
+- **Volume de alterações (code churn)** – linhas adicionadas e removidas por arquivo
 
-## Recorte do Problema
-
-Em vez de analisar tudo de forma superficial, o projeto foca em um problema específico:
-
-> Quais arquivos do sistema são mais difíceis de manter e por quê?
-
-Para responder isso, serão investigados três sinais principais:
-
-- Complexidade do código  
-- Frequência de mudanças  
-- Volume de alterações (code churn)  
-
-Hipótese:
-
-> Arquivos complexos que mudam com frequência tendem a ser os principais gargalos de manutenção.
+Arquivos complexos que mudam com frequência são apontados como **hotspots críticos**.
 
 ---
 
-## Abordagem Proposta
+## Tecnologias Utilizadas
 
-A ferramenta será dividida em três etapas:
-
-### 1. Extração de histórico
-
-Uso do PyDriller para coletar:
-
-- Commits  
-- Arquivos modificados  
-- Linhas adicionadas/removidas  
-
----
-
-### 2. Análise de código
-
-Aplicação de métricas estruturais e de qualidade:
-
-- Complexidade ciclomática (Radon)  
-- Linhas de código – LOC (CLOC)  
-- Número de funções e métodos por arquivo  
-- Tamanho médio das funções (LOC por função)  
-- Profundidade de aninhamento (nesting)  
-- Número de parâmetros por função  
-- Índice de manutenibilidade (Maintainability Index – Radon)  
-- Densidade de comentários (comentários / LOC)  
-- Número de classes e grau de acoplamento estrutural (importações entre módulos)  
+| Tecnologia | Papel |
+|---|---|
+| Python 3.12+ | Linguagem principal |
+| [PyDriller](https://github.com/ishepard/pydriller) | Extração de histórico de commits via Git |
+| [Radon](https://radon.readthedocs.io/) | Cálculo de complexidade ciclomática e índice de manutenibilidade |
+| [Typer](https://typer.tiangolo.com/) | Interface de linha de comando |
+| [Poetry](https://python-poetry.org/) | Gerenciamento de dependências |
+| [pytest](https://docs.pytest.org/) | Execução de testes |
+| GitHub Actions | Integração contínua e execução automática de testes |
 
 ---
 
-### 3. Correlação
+## Como Instalar
 
-Os dados serão combinados para identificar:
+**Pré-requisitos:** Python 3.12+ e [Poetry](https://python-poetry.org/docs/#installation)
 
-- Hotspots (arquivos muito alterados)  
-- Arquivos complexos  
-- Arquivos críticos (interseção dos dois)  
-- Acoplamento lógico (arquivos frequentemente modificados juntos em commits)  
-
----
-
-## Decisões de Projeto
-
-### Linguagem: Python
-Permite integração direta com ferramentas de análise e parsing (AST), além de simplificar o desenvolvimento.
+```bash
+git clone https://github.com/<seu-usuario>/msr-tool.git
+cd msr-tool
+poetry install
+```
 
 ---
 
-### Fonte de dados: Git (local)
-Optamos inicialmente por repositórios locais para:
+## Como Utilizar
 
-- evitar dependência de API  
-- reduzir complexidade  
-- focar na análise  
+### Analisar um repositório local
+
+```bash
+poetry run msr analyze --repo /caminho/para/o/repositorio
+```
+
+### Analisar um repositório remoto
+
+```bash
+poetry run msr analyze --repo https://github.com/usuario/projeto.git
+```
+
+### Opções disponíveis
+
+```bash
+poetry run msr analyze --help
+```
+
+```
+Usage: msr analyze [OPTIONS]
+
+Options:
+  --repo TEXT      Caminho local ou URL do repositório Git  [required]
+  --top INTEGER    Número de arquivos a exibir (padrão: 10)
+  --since TEXT     Data de início da análise (formato: YYYY-MM-DD)
+  --help           Exibe esta mensagem e sai
+```
+
+### Exemplo de saída
+
+```
+Arquivo                  Complexidade  Mudanças  Churn    Risco
+────────────────────────────────────────────────────────────────
+src/payment.py           Alta (18)     47        +3.2k    CRÍTICO
+src/auth/session.py      Média (9)     31        +1.8k    ALTO
+src/utils/formatter.py   Baixa (3)     28        +900     MÉDIO
+```
 
 ---
 
-### Interface: CLI
-Uso de Typer para criar uma ferramenta simples e automatizável.
+## Como Executar os Testes
 
----
+```bash
+poetry run pytest
+```
 
-### Escopo inicial reduzido
+Para ver a cobertura de testes:
 
-Não serão analisados, neste momento, artefatos como issues, pull requests ou pipelines de CI/CD.
+```bash
+poetry run pytest --cov=msr_tool
+```
 
-Foco em:
-
-- código  
-- commits  
-
----
-
-## Saída Esperada
-
-### Terminal
-
-```text
-payment.py → Complexidade alta + muitas mudanças → RISCO ALTO
+Os testes também são executados automaticamente via GitHub Actions a cada push ou pull request.
