@@ -1,7 +1,7 @@
 """Módulo para cálculo de métricas de saúde do repositório."""
 
 from .git_analyzer import GitAnalyzer
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from datetime import datetime
 
 class MetricsCalculator:
@@ -60,3 +60,30 @@ class MetricsCalculator:
             abandoned_files.append((file, days))
 
         return sorted(abandoned_files, key=lambda x: x[1], reverse=True)[:top_n]
+
+    def calculate_risk_score(self) -> List[Dict]:
+        """
+        Calcula o score de risco dos arquivos (commits * autores).
+
+        Returns:
+            Lista de dicionários com as métricas e o score
+        """
+        file_commits = self.analyzer.get_file_commit_count()
+        file_authors = self.analyzer.get_file_authors()
+
+        risk_scores = []
+        all_files = set(file_commits.keys()) | set(file_authors.keys())
+
+        for file in all_files:
+            commits = file_commits.get(file, 0)
+            authors = len(file_authors.get(file, set()))
+            score = commits * authors
+
+            risk_scores.append({
+                'file': file,
+                'commits': commits,
+                'authors': authors,
+                'risk_score': score
+            })
+
+        return sorted(risk_scores, key=lambda x: x['risk_score'], reverse=True)
