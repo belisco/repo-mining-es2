@@ -1,9 +1,7 @@
-"""Módulo para análise de repositórios."""
-
+from git import Repo
 from pathlib import Path
 from typing import Dict, List, Set
-from git import Repo
-
+from datetime import datetime
 
 class GitAnalyzer:
     """Classe responsável por analisar repositórios Git."""
@@ -97,3 +95,12 @@ class GitAnalyzer:
                 continue
 
         return file_last_mod
+
+    def get_all_tracked_files(self) -> List[str]:
+        """
+        Retorna a lista de todos os arquivos rastreados pelo Git no branch atual.
+
+        Returns:
+            Lista de caminhos de arquivos
+        """
+        return [item.path for item in self.repo.tree().traverse() if item.type == 'blob']
