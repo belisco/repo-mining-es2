@@ -57,6 +57,15 @@ def abandoned(ctx, top):
     report = ReportGenerator.format_abandoned(results)
     click.echo(report)
 
+@cli.command()
+@click.pass_context
+def risk(ctx):
+    """Calcula o score de risco (commits × autores) por arquivo."""
+    calculator = ctx.obj["calculator"]
+    results = calculator.calculate_risk_score()
+    report = ReportGenerator.format_risk_score(results)
+    click.echo(report)
+    
 def main():
     """Ponto de entrada principal do CLI."""
     cli(obj={})
