@@ -38,6 +38,14 @@ def hotspots(ctx, top):
     report = ReportGenerator.format_hotspots(results)
     click.echo(report)
 
+@cli.command()
+@click.pass_context
+def ownership(ctx):
+    """Identifica a quantidade de autores por arquivo."""
+    calculator = ctx.obj["calculator"]
+    results = calculator.calculate_ownership()
+    report = ReportGenerator.format_ownership(results)
+    click.echo(report)
 
 def main():
     """Ponto de entrada principal do CLI."""

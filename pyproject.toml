@@ -40,3 +40,5 @@ pre_format = {cmd = "poetry run ruff check --fix"}
 format = {cmd = "poetry run ruff format"}
 pre_run = {cmd = "poetry run task format"}
 run = { cmd = "poetry run python3 repo_mining_es2/main.py buscar --name https://github.com/pytest-dev/pytest.git" }
+pre_test = {cmd = "poetry run task format"}
+test = {cmd = "poetry run pytest --cov=msr_tool"}
