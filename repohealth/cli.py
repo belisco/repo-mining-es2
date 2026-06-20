@@ -46,6 +46,16 @@ def ownership(ctx):
     results = calculator.calculate_ownership()
     report = ReportGenerator.format_ownership(results)
     click.echo(report)
+    
+@cli.command()
+@click.option("--top", default=10, help="Número de resultados a exibir")
+@click.pass_context
+def abandoned(ctx, top):
+    """Mostra arquivos sem modificações há mais tempo."""
+    calculator = ctx.obj["calculator"]
+    results = calculator.calculate_abandoned(top_n=top)
+    report = ReportGenerator.format_abandoned(results)
+    click.echo(report)
 
 def main():
     """Ponto de entrada principal do CLI."""
