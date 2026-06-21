@@ -1,3 +1,4 @@
+"""Testes para o módulo metrics."""
 import tempfile
 from pathlib import Path
 

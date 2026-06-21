@@ -1,3 +1,4 @@
+"""Testes para o módulo git_analyzer."""
 import tempfile
 from pathlib import Path
 
