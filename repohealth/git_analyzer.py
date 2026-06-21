@@ -1,3 +1,4 @@
+"""Módulo para análise de repositórios Git."""
 from git import Repo
 from pathlib import Path
 from typing import Dict, List, Set
