@@ -80,3 +80,44 @@ def test_format_json_outputs():
     assert loaded[0]["commits"] == 10
     assert loaded[0]["authors"] == 3
     assert loaded[0]["risk_score"] == 30
+
+
+def test_format_empty_and_colors():
+    """Testa caminhos de relatórios vazios e verificação de cores."""
+    import click
+    
+    # Executa sem cores em um mock terminal se necessário, mas click.style sempre retorna as sequências
+    # Hotspots - Teste de limites de cor (high >= 10, med >= 5, low < 5)
+    res_high = ReportGenerator.format_hotspots([("file_a.py", 12)])
+    assert "file_a.py" in res_high
+    res_med = ReportGenerator.format_hotspots([("file_b.py", 6)])
+    assert "file_b.py" in res_med
+    res_low = ReportGenerator.format_hotspots([("file_c.py", 2)])
+    assert "file_c.py" in res_low
+    
+    # Ownership - Vazio e limites de cor (high >= 5, med >= 3, low < 3)
+    assert "Nenhum arquivo encontrado" in ReportGenerator.format_ownership([])
+    res_own_high = ReportGenerator.format_ownership([("file_a.py", 6)])
+    assert "file_a.py" in res_own_high
+    res_own_med = ReportGenerator.format_ownership([("file_b.py", 4)])
+    assert "file_b.py" in res_own_med
+    res_own_low = ReportGenerator.format_ownership([("file_c.py", 1)])
+    assert "file_c.py" in res_own_low
+
+    # Abandoned - Vazio e limites de cor (high >= 365, med >= 90, low < 90)
+    assert "Nenhum arquivo encontrado" in ReportGenerator.format_abandoned([])
+    res_ab_high = ReportGenerator.format_abandoned([("file_a.py", 400)])
+    assert "file_a.py" in res_ab_high
+    res_ab_med = ReportGenerator.format_abandoned([("file_b.py", 120)])
+    assert "file_b.py" in res_ab_med
+    res_ab_low = ReportGenerator.format_abandoned([("file_c.py", 30)])
+    assert "file_c.py" in res_ab_low
+
+    # Risk Score - Vazio e limites de cor (high >= 50, med >= 10, low < 10)
+    assert "Nenhum arquivo encontrado" in ReportGenerator.format_risk_score([])
+    res_risk_high = ReportGenerator.format_risk_score([("file_a.py", 10, 6, 60)])
+    assert "file_a.py" in res_risk_high
+    res_risk_med = ReportGenerator.format_risk_score([("file_b.py", 5, 3, 15)])
+    assert "file_b.py" in res_risk_med
+    res_risk_low = ReportGenerator.format_risk_score([("file_c.py", 2, 2, 4)])
+    assert "file_c.py" in res_risk_low

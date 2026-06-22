@@ -3,6 +3,8 @@
 import json
 from typing import List, Tuple
 
+import click
+
 
 class ReportGenerator:
     """Classe responsável por formatar e gerar relatórios de métricas."""
@@ -12,10 +14,16 @@ class ReportGenerator:
         if not hotspots:
             return "HOTSPOTS\nNenhum arquivo encontrado"
 
-        report = ["HOTSPOTS"]
+        report = [click.style("HOTSPOTS", bold=True, fg="cyan")]
 
         for file, count in hotspots:
-            report.append(f"{file}: {count} commits")
+            if count >= 10:
+                color = "red"
+            elif count >= 5:
+                color = "yellow"
+            else:
+                color = "green"
+            report.append(f"{click.style(file, fg=color)}: {count} commits")
 
         return "\n".join(report)
 
@@ -26,10 +34,19 @@ class ReportGenerator:
 
     @staticmethod
     def format_ownership(ownership: List[Tuple[str, int]]) -> str:
-        report = ["OWNERSHIP"]
+        if not ownership:
+            return "OWNERSHIP\nNenhum arquivo encontrado"
+
+        report = [click.style("OWNERSHIP", bold=True, fg="cyan")]
 
         for file, count in ownership:
-            report.append(f"{file}: {count} autores")
+            if count >= 5:
+                color = "red"
+            elif count >= 3:
+                color = "yellow"
+            else:
+                color = "green"
+            report.append(f"{click.style(file, fg=color)}: {count} autores")
 
         return "\n".join(report)
 
@@ -40,10 +57,19 @@ class ReportGenerator:
 
     @staticmethod
     def format_abandoned(abandoned: List[Tuple[str, int]]) -> str:
-        report = ["ABANDONED FILES"]
+        if not abandoned:
+            return "ABANDONED FILES\nNenhum arquivo encontrado"
+
+        report = [click.style("ABANDONED FILES", bold=True, fg="cyan")]
 
         for file, days in abandoned:
-            report.append(f"{file}: {days} dias sem modificação")
+            if days >= 365:
+                color = "red"
+            elif days >= 90:
+                color = "yellow"
+            else:
+                color = "green"
+            report.append(f"{click.style(file, fg=color)}: {days} dias sem modificação")
 
         return "\n".join(report)
 
@@ -56,11 +82,20 @@ class ReportGenerator:
     def format_risk_score(
     risk_scores: List[Tuple[str, int, int, int]]
     ) -> str:
-        report = ["RISK SCORE"]
+        if not risk_scores:
+            return "RISK SCORE\nNenhum arquivo encontrado"
+
+        report = [click.style("RISK SCORE", bold=True, fg="cyan")]
 
         for file, commits, authors, score in risk_scores:
+            if score >= 50:
+                color = "red"
+            elif score >= 10:
+                color = "yellow"
+            else:
+                color = "green"
             report.append(
-                f"{file}: Score: {score} "
+                f"{click.style(file, fg=color)}: Score: {score} "
                 f"(commits={commits}, autores={authors})"
             )
 
