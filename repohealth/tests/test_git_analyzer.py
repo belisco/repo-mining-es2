@@ -62,3 +62,11 @@ def test_get_file_authors(temp_repo):
     
     assert "test.txt" in file_authors
     assert "test@example.com" in file_authors["test.txt"]
+
+def test_get_file_last_modification(temp_repo):
+    """Testa recuperação de última modificação."""
+    analyzer = GitAnalyzer(temp_repo)
+    file_last_mod = analyzer.get_file_last_modification()
+    
+    assert "test.txt" in file_last_mod
+    assert file_last_mod["test.txt"] is not None
