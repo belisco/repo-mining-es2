@@ -53,9 +53,10 @@ def hotspots(ctx, top):
     results = calculator.calculate_hotspots(top_n=top)
     if ctx.obj.get("format") == "json":
         report = ReportGenerator.format_hotspots_json(results)
+        click.echo(report)
     else:
         report = ReportGenerator.format_hotspots(results)
-    click.echo(report)
+        click.echo(report, color=True)
 
 @cli.command()
 @click.option("--top", default=10, help="Número de resultados a exibir")
@@ -66,9 +67,10 @@ def ownership(ctx, top):
     results = calculator.calculate_ownership(top_n=top)
     if ctx.obj.get("format") == "json":
         report = ReportGenerator.format_ownership_json(results)
+        click.echo(report)
     else:
         report = ReportGenerator.format_ownership(results)
-    click.echo(report)
+        click.echo(report, color=True)
     
 @cli.command()
 @click.option("--top", default=10, help="Número de resultados a exibir")
@@ -79,9 +81,10 @@ def abandoned(ctx, top):
     results = calculator.calculate_abandoned(top_n=top)
     if ctx.obj.get("format") == "json":
         report = ReportGenerator.format_abandoned_json(results)
+        click.echo(report)
     else:
         report = ReportGenerator.format_abandoned(results)
-    click.echo(report)
+        click.echo(report, color=True)
 
 @cli.command()
 @click.option("--top", default=10, help="Número de resultados a exibir")
@@ -92,9 +95,10 @@ def risk(ctx, top):
     results = calculator.calculate_risk_score(top_n=top)
     if ctx.obj.get("format") == "json":
         report = ReportGenerator.format_risk_score_json(results)
+        click.echo(report)
     else:
         report = ReportGenerator.format_risk_score(results)
-    click.echo(report)
+        click.echo(report, color=True)
 
 
 @cli.command(name="bus-factor")
@@ -106,9 +110,10 @@ def bus_factor(ctx, top):
     results = calculator.calculate_bus_factor(top_n=top)
     if ctx.obj.get("format") == "json":
         report = ReportGenerator.format_bus_factor_json(results)
+        click.echo(report)
     else:
         report = ReportGenerator.format_bus_factor(results)
-    click.echo(report)
+        click.echo(report, color=True)
     
 def main():
     """Ponto de entrada principal do CLI."""
