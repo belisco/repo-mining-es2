@@ -70,3 +70,14 @@ def test_calculate_risk_score(temp_repo_metrics):
     assert len(risk_scores) > 0
     for file, commits, authors, score in risk_scores:
         assert score == commits * authors
+
+def test_calculate_abandoned(temp_repo_metrics):
+    """Testa cálculo de arquivos abandonados."""
+    analyzer = GitAnalyzer(temp_repo_metrics)
+    calculator = MetricsCalculator(analyzer)
+    
+    abandoned = calculator.calculate_abandoned(top_n=10)
+    
+    assert len(abandoned) > 0
+    for file, days in abandoned:
+        assert days >= 0
