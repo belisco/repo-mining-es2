@@ -133,3 +133,18 @@ def test_cli_json_format(temp_repo_cli):
     assert len(data) > 0
     assert "file" in data[0]
     assert "risk_score" in data[0]
+
+
+def test_cli_exclude_option(temp_repo_cli):
+    """Testa se a opção --exclude filtra corretamente os arquivos no CLI."""
+    runner = CliRunner()
+    
+    # Executa hotspots sem exclusão
+    res_normal = runner.invoke(cli, ["--repo", temp_repo_cli, "hotspots"])
+    assert res_normal.exit_code == 0
+    assert "test.py" in res_normal.output
+    
+    # Executa hotspots com exclusão do arquivo test.py
+    res_excluded = runner.invoke(cli, ["--repo", temp_repo_cli, "--exclude", "test.py", "hotspots"])
+    assert res_excluded.exit_code == 0
+    assert "test.py" not in res_excluded.output

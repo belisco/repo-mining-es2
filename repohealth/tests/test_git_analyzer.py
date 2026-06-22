@@ -95,3 +95,14 @@ def test_git_analyzer_empty_repo():
         assert analyzer.get_file_last_modification() == {}
         
         repo.close()
+
+
+def test_git_analyzer_exclude(temp_repo):
+    """Testa a exclusão de arquivos com padrões glob/diretório."""
+    analyzer = GitAnalyzer(temp_repo, exclude_patterns=["*.txt", "ignored_dir/"])
+    
+    # test.txt deve ser filtrado
+    assert "test.txt" not in analyzer.get_file_commit_count()
+    assert "test.txt" not in analyzer.get_file_authors()
+    assert "test.txt" not in analyzer.get_file_last_modification()
+    assert "test.txt" not in analyzer.get_all_tracked_files()

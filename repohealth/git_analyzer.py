@@ -1,6 +1,7 @@
 """Módulo para análise de repositórios Git."""
 
 from datetime import datetime
+import fnmatch
 from pathlib import Path
 from typing import Dict, List, Set
 
@@ -10,18 +11,31 @@ from git import Repo
 class GitAnalyzer:
     """Classe responsável por analisar repositórios Git."""
 
-    def __init__(self, repo_path: str = "."):
+    def __init__(self, repo_path: str = ".", exclude_patterns: List[str] = None):
         """
         Inicializa o analisador com o caminho do repositório.
 
         Args:
             repo_path: Caminho para o repositório Git
+            exclude_patterns: Padrões de exclusão de arquivos (glob/path)
         """
         self.repo_path = Path(repo_path)
         self.repo = Repo(repo_path)
+        self.exclude_patterns = exclude_patterns or []
         self._file_commits = None
         self._file_authors = None
         self._file_last_mod = None
+
+    def _is_excluded(self, file_path: str) -> bool:
+        """Verifica se um arquivo corresponde a algum padrão de exclusão."""
+        for pattern in self.exclude_patterns:
+            if fnmatch.fnmatch(file_path, pattern):
+                return True
+            if pattern.endswith("/") and file_path.startswith(pattern):
+                return True
+            if file_path.startswith(pattern):
+                return True
+        return False
 
     def get_all_commits(self) -> List:
         """
@@ -57,6 +71,9 @@ class GitAnalyzer:
                 author = commit.author.email
 
                 for file_path in commit.stats.files:
+                    if self._is_excluded(file_path):
+                        continue
+
                     # Contagem de commits
                     self._file_commits[file_path] = (
                         self._file_commits.get(file_path, 0) + 1
@@ -116,5 +133,5 @@ class GitAnalyzer:
         return [
             item.path
             for item in self.repo.tree().traverse()
-            if item.type == "blob"
+            if item.type == "blob" and not self._is_excluded(item.path)
         ]

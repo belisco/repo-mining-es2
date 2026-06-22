@@ -18,8 +18,13 @@ import click
     type=click.Choice(["text", "json"]),
     help="Formato de saída (text ou json)",
 )
+@click.option(
+    "--exclude",
+    default=None,
+    help="Padrões para excluir da análise (separados por vírgula)",
+)
 @click.pass_context
-def cli(ctx, repo, format):
+def cli(ctx, repo, format, exclude):
     """RepoHealth - Ferramenta de análise de saúde de repositórios Git."""
     ctx.ensure_object(dict)
     
@@ -29,8 +34,12 @@ def cli(ctx, repo, format):
         click.echo(f"Erro: '{repo}' não é um repositório Git válido.", err=True)
         sys.exit(1)
     
+    exclude_patterns = []
+    if exclude:
+        exclude_patterns = [p.strip() for p in exclude.split(",") if p.strip()]
+
     # Inicializa analisadores
-    ctx.obj["analyzer"] = GitAnalyzer(repo)
+    ctx.obj["analyzer"] = GitAnalyzer(repo, exclude_patterns=exclude_patterns)
     ctx.obj["calculator"] = MetricsCalculator(ctx.obj["analyzer"])
     ctx.obj["format"] = format
 
