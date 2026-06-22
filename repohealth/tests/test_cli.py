@@ -91,3 +91,45 @@ def test_cli_main(monkeypatch):
     monkeypatch.setattr("repohealth.cli.cli", mock_cli)
     main()
     assert called
+
+
+def test_cli_json_format(temp_repo_cli):
+    """Testa a saída em formato JSON de todos os comandos do CLI."""
+    import json
+    runner = CliRunner()
+    
+    # hotspots json
+    res = runner.invoke(cli, ["--repo", temp_repo_cli, "--format", "json", "hotspots"])
+    assert res.exit_code == 0
+    data = json.loads(res.output)
+    assert isinstance(data, list)
+    assert len(data) > 0
+    assert "file" in data[0]
+    assert "commits" in data[0]
+    
+    # ownership json
+    res = runner.invoke(cli, ["--repo", temp_repo_cli, "--format", "json", "ownership"])
+    assert res.exit_code == 0
+    data = json.loads(res.output)
+    assert isinstance(data, list)
+    assert len(data) > 0
+    assert "file" in data[0]
+    assert "authors" in data[0]
+    
+    # abandoned json
+    res = runner.invoke(cli, ["--repo", temp_repo_cli, "--format", "json", "abandoned"])
+    assert res.exit_code == 0
+    data = json.loads(res.output)
+    assert isinstance(data, list)
+    assert len(data) > 0
+    assert "file" in data[0]
+    assert "days_since_modification" in data[0]
+    
+    # risk json
+    res = runner.invoke(cli, ["--repo", temp_repo_cli, "--format", "json", "risk"])
+    assert res.exit_code == 0
+    data = json.loads(res.output)
+    assert isinstance(data, list)
+    assert len(data) > 0
+    assert "file" in data[0]
+    assert "risk_score" in data[0]

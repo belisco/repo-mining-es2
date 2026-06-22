@@ -12,8 +12,14 @@ import click
 
 @click.group()
 @click.option("--repo", default=".", help="Caminho para o repositório Git")
+@click.option(
+    "--format",
+    default="text",
+    type=click.Choice(["text", "json"]),
+    help="Formato de saída (text ou json)",
+)
 @click.pass_context
-def cli(ctx, repo):
+def cli(ctx, repo, format):
     """RepoHealth - Ferramenta de análise de saúde de repositórios Git."""
     ctx.ensure_object(dict)
     
@@ -26,6 +32,7 @@ def cli(ctx, repo):
     # Inicializa analisadores
     ctx.obj["analyzer"] = GitAnalyzer(repo)
     ctx.obj["calculator"] = MetricsCalculator(ctx.obj["analyzer"])
+    ctx.obj["format"] = format
 
 
 @cli.command()
@@ -35,7 +42,10 @@ def hotspots(ctx, top):
     """Identifica os arquivos mais modificados (hotspots)."""
     calculator = ctx.obj["calculator"]
     results = calculator.calculate_hotspots(top_n=top)
-    report = ReportGenerator.format_hotspots(results)
+    if ctx.obj.get("format") == "json":
+        report = ReportGenerator.format_hotspots_json(results)
+    else:
+        report = ReportGenerator.format_hotspots(results)
     click.echo(report)
 
 @cli.command()
@@ -45,7 +55,10 @@ def ownership(ctx, top):
     """Identifica a quantidade de autores por arquivo."""
     calculator = ctx.obj["calculator"]
     results = calculator.calculate_ownership(top_n=top)
-    report = ReportGenerator.format_ownership(results)
+    if ctx.obj.get("format") == "json":
+        report = ReportGenerator.format_ownership_json(results)
+    else:
+        report = ReportGenerator.format_ownership(results)
     click.echo(report)
     
 @cli.command()
@@ -55,7 +68,10 @@ def abandoned(ctx, top):
     """Mostra arquivos sem modificações há mais tempo."""
     calculator = ctx.obj["calculator"]
     results = calculator.calculate_abandoned(top_n=top)
-    report = ReportGenerator.format_abandoned(results)
+    if ctx.obj.get("format") == "json":
+        report = ReportGenerator.format_abandoned_json(results)
+    else:
+        report = ReportGenerator.format_abandoned(results)
     click.echo(report)
 
 @cli.command()
@@ -65,7 +81,10 @@ def risk(ctx, top):
     """Calcula o score de risco (commits × autores) por arquivo."""
     calculator = ctx.obj["calculator"]
     results = calculator.calculate_risk_score(top_n=top)
-    report = ReportGenerator.format_risk_score(results)
+    if ctx.obj.get("format") == "json":
+        report = ReportGenerator.format_risk_score_json(results)
+    else:
+        report = ReportGenerator.format_risk_score(results)
     click.echo(report)
     
 def main():

@@ -1,5 +1,6 @@
 """Módulo para geração de relatórios de métricas do repositório."""
 
+import json
 from typing import List, Tuple
 
 
@@ -18,6 +19,10 @@ class ReportGenerator:
 
         return "\n".join(report)
 
+    @staticmethod
+    def format_hotspots_json(hotspots: List[Tuple[str, int]]) -> str:
+        data = [{"file": file, "commits": count} for file, count in hotspots]
+        return json.dumps(data, indent=2, ensure_ascii=False)
 
     @staticmethod
     def format_ownership(ownership: List[Tuple[str, int]]) -> str:
@@ -29,6 +34,11 @@ class ReportGenerator:
         return "\n".join(report)
 
     @staticmethod
+    def format_ownership_json(ownership: List[Tuple[str, int]]) -> str:
+        data = [{"file": file, "authors": count} for file, count in ownership]
+        return json.dumps(data, indent=2, ensure_ascii=False)
+
+    @staticmethod
     def format_abandoned(abandoned: List[Tuple[str, int]]) -> str:
         report = ["ABANDONED FILES"]
 
@@ -36,6 +46,11 @@ class ReportGenerator:
             report.append(f"{file}: {days} dias sem modificação")
 
         return "\n".join(report)
+
+    @staticmethod
+    def format_abandoned_json(abandoned: List[Tuple[str, int]]) -> str:
+        data = [{"file": file, "days_since_modification": days} for file, days in abandoned]
+        return json.dumps(data, indent=2, ensure_ascii=False)
 
     @staticmethod
     def format_risk_score(
@@ -50,5 +65,15 @@ class ReportGenerator:
             )
 
         return "\n".join(report)
+
+    @staticmethod
+    def format_risk_score_json(
+        risk_scores: List[Tuple[str, int, int, int]]
+    ) -> str:
+        data = [
+            {"file": file, "commits": commits, "authors": authors, "risk_score": score}
+            for file, commits, authors, score in risk_scores
+        ]
+        return json.dumps(data, indent=2, ensure_ascii=False)
 
 
