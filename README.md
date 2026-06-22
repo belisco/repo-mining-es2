@@ -148,3 +148,9 @@ Para validar a integridade do código e rodar a suite de testes automatizados co
 ```bash
 python3 -m pytest repohealth
 ```
+
+---
+
+## Licença
+
+Este projeto está licenciado sob os termos da [MIT License](LICENSE).
