@@ -53,3 +53,15 @@ python3 -m pytest repohealth --cov=repohealth --cov-report=term-missing
 ```
 
 A aprovação no GitHub Actions (CI/CD) é obrigatória para que o Pull Request seja aprovado.
+
+---
+
+## 4. Processo de Release
+
+Para cortar uma nova versão do RepoHealth:
+
+1. **Atualize a versão:** Altere `__version__` em `repohealth/__init__.py`. `setup.py` e `pyproject.toml` leem esse valor automaticamente, então não precisam ser editados.
+2. **Atualize o CHANGELOG.md:** Adicione uma seção descrevendo as mudanças da nova versão.
+3. **Commit:** `chore: prepare vX.Y.Z release`.
+4. **Crie a tag:** `git tag -a vX.Y.Z -m "Release vX.Y.Z"`.
+5. **Publique:** `git push && git push --tags`.
