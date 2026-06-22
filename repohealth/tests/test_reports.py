@@ -121,3 +121,33 @@ def test_format_empty_and_colors():
     assert "file_b.py" in res_risk_med
     res_risk_low = ReportGenerator.format_risk_score([("file_c.py", 2, 2, 4)])
     assert "file_c.py" in res_risk_low
+
+
+def test_format_bus_factor():
+    """Testa a formatação da métrica de Bus Factor."""
+    import json
+    
+    # Text empty check
+    assert "Nenhum arquivo encontrado" in ReportGenerator.format_bus_factor([])
+    
+    # Text colors and format check (high risk: factor=1, medium: factor=2, low: factor>=3)
+    data = [
+        ("file_a.py", 1, "dev1@example.com", 90.0, 10),
+        ("file_b.py", 2, "dev2@example.com", 45.0, 20),
+        ("file_c.py", 3, "dev3@example.com", 25.0, 30)
+    ]
+    res_txt = ReportGenerator.format_bus_factor(data)
+    assert "BUS FACTOR" in res_txt
+    assert "file_a.py" in res_txt
+    assert "file_b.py" in res_txt
+    assert "file_c.py" in res_txt
+    
+    # JSON format check
+    res_json = ReportGenerator.format_bus_factor_json(data)
+    loaded = json.loads(res_json)
+    assert len(loaded) == 3
+    assert loaded[0]["file"] == "file_a.py"
+    assert loaded[0]["bus_factor"] == 1
+    assert loaded[0]["main_author"] == "dev1@example.com"
+    assert loaded[0]["main_author_percentage"] == 90.0
+    assert loaded[0]["total_commits"] == 10

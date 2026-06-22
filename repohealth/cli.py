@@ -95,6 +95,20 @@ def risk(ctx, top):
     else:
         report = ReportGenerator.format_risk_score(results)
     click.echo(report)
+
+
+@cli.command(name="bus-factor")
+@click.option("--top", default=10, help="Número de resultados a exibir")
+@click.pass_context
+def bus_factor(ctx, top):
+    """Calcula o bus factor (gargalo de autores) por arquivo."""
+    calculator = ctx.obj["calculator"]
+    results = calculator.calculate_bus_factor(top_n=top)
+    if ctx.obj.get("format") == "json":
+        report = ReportGenerator.format_bus_factor_json(results)
+    else:
+        report = ReportGenerator.format_bus_factor(results)
+    click.echo(report)
     
 def main():
     """Ponto de entrada principal do CLI."""

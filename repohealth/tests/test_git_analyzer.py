@@ -93,6 +93,7 @@ def test_git_analyzer_empty_repo():
         assert analyzer.get_file_commit_count() == {}
         assert analyzer.get_file_authors() == {}
         assert analyzer.get_file_last_modification() == {}
+        assert analyzer.get_file_author_commits() == {}
         
         repo.close()
 
@@ -106,3 +107,13 @@ def test_git_analyzer_exclude(temp_repo):
     assert "test.txt" not in analyzer.get_file_authors()
     assert "test.txt" not in analyzer.get_file_last_modification()
     assert "test.txt" not in analyzer.get_all_tracked_files()
+
+
+def test_get_file_author_commits(temp_repo):
+    """Testa a obtenção do número de commits por autor por arquivo."""
+    analyzer = GitAnalyzer(temp_repo)
+    author_commits = analyzer.get_file_author_commits()
+    
+    assert "test.txt" in author_commits
+    assert "test@example.com" in author_commits["test.txt"]
+    assert author_commits["test.txt"]["test@example.com"] == 2

@@ -148,3 +148,25 @@ def test_cli_exclude_option(temp_repo_cli):
     res_excluded = runner.invoke(cli, ["--repo", temp_repo_cli, "--exclude", "test.py", "hotspots"])
     assert res_excluded.exit_code == 0
     assert "test.py" not in res_excluded.output
+
+
+def test_cli_bus_factor_command(temp_repo_cli):
+    """Testa o comando bus-factor no CLI."""
+    import json
+    runner = CliRunner()
+    
+    # Text output check
+    result = runner.invoke(cli, ["--repo", temp_repo_cli, "bus-factor"])
+    assert result.exit_code == 0
+    assert "BUS FACTOR" in result.output
+    assert "test.py" in result.output
+    
+    # JSON output check
+    result_json = runner.invoke(cli, ["--repo", temp_repo_cli, "--format", "json", "bus-factor"])
+    assert result_json.exit_code == 0
+    data = json.loads(result_json.output)
+    assert isinstance(data, list)
+    assert len(data) > 0
+    assert data[0]["file"] == "test.py"
+    assert data[0]["bus_factor"] == 1
+    assert "main_author" in data[0]

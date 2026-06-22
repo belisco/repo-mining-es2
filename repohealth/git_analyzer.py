@@ -25,6 +25,7 @@ class GitAnalyzer:
         self._file_commits = None
         self._file_authors = None
         self._file_last_mod = None
+        self._file_author_commits = None
 
     def _is_excluded(self, file_path: str) -> bool:
         """Verifica se um arquivo corresponde a algum padrão de exclusão."""
@@ -57,6 +58,7 @@ class GitAnalyzer:
         self._file_commits = {}
         self._file_authors = {}
         self._file_last_mod = {}
+        self._file_author_commits = {}
 
         try:
             commits = self.repo.iter_commits("--all")
@@ -90,6 +92,13 @@ class GitAnalyzer:
                         or commit_date > self._file_last_mod[file_path]
                     ):
                         self._file_last_mod[file_path] = commit_date
+
+                    # Commits por autor por arquivo
+                    if file_path not in self._file_author_commits:
+                        self._file_author_commits[file_path] = {}
+                    self._file_author_commits[file_path][author] = (
+                        self._file_author_commits[file_path].get(author, 0) + 1
+                    )
             except Exception:
                 continue
 
@@ -122,6 +131,16 @@ class GitAnalyzer:
         """
         self._analyze_repo()
         return self._file_last_mod
+
+    def get_file_author_commits(self) -> Dict[str, Dict[str, int]]:
+        """
+        Retorna a contagem de commits por autor para cada arquivo.
+
+        Returns:
+            Dicionário {arquivo: {autor: commits}}
+        """
+        self._analyze_repo()
+        return self._file_author_commits
 
     def get_all_tracked_files(self) -> List[str]:
         """

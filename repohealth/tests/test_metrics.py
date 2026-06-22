@@ -89,3 +89,21 @@ def test_calculate_abandoned(temp_repo_metrics):
     assert len(abandoned) > 0
     for file, days in abandoned:
         assert days >= 0
+
+
+def test_calculate_bus_factor(temp_repo_metrics):
+    """Testa o cálculo do Bus Factor."""
+    analyzer = GitAnalyzer(temp_repo_metrics)
+    calculator = MetricsCalculator(analyzer)
+    
+    results = calculator.calculate_bus_factor()
+    assert len(results) > 0
+    for file, factor, main_author, main_percentage, total in results:
+        assert factor >= 1
+        assert main_author == "dev1@example.com"
+        assert main_percentage == 100.0
+        assert total > 0
+
+    # Test top_n parameter
+    results_top = calculator.calculate_bus_factor(top_n=1)
+    assert len(results_top) == 1

@@ -158,3 +158,68 @@ class MetricsCalculator:
         if top_n is not None:
             return sorted_files[:top_n]
         return sorted_files
+
+    def calculate_bus_factor(
+        self,
+        top_n: int = None,
+    ) -> List[Tuple[str, int, str, float, int]]:
+        """
+        Calcula o Bus Factor por arquivo.
+
+        Bus Factor é o número mínimo de desenvolvedores necessários para atingir
+        mais de 50% dos commits do arquivo.
+
+        Args:
+            top_n: Número de resultados a retornar
+
+        Returns:
+            Lista de tuplas (arquivo, bus_factor, autor_principal, percentual_autor_principal, total_commits)
+        """
+        file_author_commits = self.analyzer.get_file_author_commits()
+        bus_factors = []
+
+        for file, author_counts in file_author_commits.items():
+            total_commits = sum(author_counts.values())
+            if total_commits == 0:
+                continue
+
+            # Ordena autores por número de commits de forma decrescente
+            sorted_authors = sorted(
+                author_counts.items(),
+                key=lambda x: x[1],
+                reverse=True,
+            )
+
+            # Calcula o bus factor
+            bus_factor = 0
+            cumulative_commits = 0
+            half_commits = total_commits / 2.0
+
+            for author, count in sorted_authors:
+                cumulative_commits += count
+                bus_factor += 1
+                if cumulative_commits > half_commits:
+                    break
+
+            main_author, main_commits = sorted_authors[0]
+            main_percentage = (main_commits / total_commits) * 100.0
+
+            bus_factors.append(
+                (
+                    file,
+                    bus_factor,
+                    main_author,
+                    main_percentage,
+                    total_commits,
+                )
+            )
+
+        # Ordenação: menor bus factor (mais risco), depois maior número total de commits (mais criticidade)
+        sorted_files = sorted(
+            bus_factors,
+            key=lambda x: (x[1], -x[4]),
+        )
+
+        if top_n is not None:
+            return sorted_files[:top_n]
+        return sorted_files

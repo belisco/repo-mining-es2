@@ -111,4 +111,40 @@ class ReportGenerator:
         ]
         return json.dumps(data, indent=2, ensure_ascii=False)
 
+    @staticmethod
+    def format_bus_factor(bus_factor_results: List[Tuple[str, int, str, float, int]]) -> str:
+        if not bus_factor_results:
+            return "BUS FACTOR\nNenhum arquivo encontrado"
+
+        report = [click.style("BUS FACTOR", bold=True, fg="cyan")]
+
+        for file, factor, author, percentage, total in bus_factor_results:
+            if factor == 1:
+                color = "red"
+            elif factor == 2:
+                color = "yellow"
+            else:
+                color = "green"
+
+            report.append(
+                f"{click.style(file, fg=color)}: Bus Factor: {factor} "
+                f"(Principal: {author} ({percentage:.1f}%), Total: {total} commits)"
+            )
+
+        return "\n".join(report)
+
+    @staticmethod
+    def format_bus_factor_json(bus_factor_results: List[Tuple[str, int, str, float, int]]) -> str:
+        data = [
+            {
+                "file": file,
+                "bus_factor": factor,
+                "main_author": author,
+                "main_author_percentage": round(percentage, 2),
+                "total_commits": total
+            }
+            for file, factor, author, percentage, total in bus_factor_results
+        ]
+        return json.dumps(data, indent=2, ensure_ascii=False)
+
 
