@@ -1,8 +1,13 @@
+from pathlib import Path
+
 from setuptools import setup, find_packages
+
+version_ns = {}
+exec((Path(__file__).parent / "__init__.py").read_text(), version_ns)
 
 setup(
     name="repohealth",
-    version="1.0.0",
+    version=version_ns["__version__"],
     packages=find_packages(),
     install_requires=[
         "gitpython>=3.1.0",
