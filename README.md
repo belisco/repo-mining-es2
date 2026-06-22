@@ -1,5 +1,7 @@
 # MSR Tool – Análise de Manutenibilidade de Repositórios
 
+[![Tests](https://github.com/belisco/repo-mining-es2/actions/workflows/tests.yml/badge.svg)](https://github.com/belisco/repo-mining-es2/actions/workflows/tests.yml)
+
 ## Integrantes
 
 - Gustavo Amaral Bernardino
