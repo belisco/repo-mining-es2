@@ -1,5 +1,7 @@
 """Testes para o módulo CLI."""
 
+import gc
+import shutil
 import tempfile
 from pathlib import Path
 
@@ -13,19 +15,23 @@ from repohealth.cli import cli
 @pytest.fixture
 def temp_repo_cli():
     """Cria repositório para testar CLI."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        repo = Repo.init(tmpdir)
-        
-        with repo.config_writer() as config:
-            config.set_value("user", "name", "Test")
-            config.set_value("user", "email", "test@test.com")
-        
-        test_file = Path(tmpdir) / "test.py"
-        test_file.write_text("print('hello')")
-        repo.index.add(["test.py"])
-        repo.index.commit("Initial")
-        
-        yield tmpdir
+    tmpdir = tempfile.mkdtemp()
+    repo = Repo.init(tmpdir)
+
+    with repo.config_writer() as config:
+        config.set_value("user", "name", "Test")
+        config.set_value("user", "email", "test@test.com")
+
+    test_file = Path(tmpdir) / "test.py"
+    test_file.write_text("print('hello')")
+    repo.index.add(["test.py"])
+    repo.index.commit("Initial")
+
+    yield tmpdir
+
+    repo.close()
+    gc.collect()
+    shutil.rmtree(tmpdir, ignore_errors=True)
 
 
 def test_cli_hotspots_command(temp_repo_cli):

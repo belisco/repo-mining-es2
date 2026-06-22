@@ -1,4 +1,6 @@
 """Testes para o módulo git_analyzer."""
+import gc
+import shutil
 import tempfile
 from pathlib import Path
 
@@ -11,26 +13,27 @@ from repohealth.git_analyzer import GitAnalyzer
 @pytest.fixture
 def temp_repo():
     """Cria um repositório Git temporário para testes."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        repo = Repo.init(tmpdir)
-        
-        # Configura o autor
-        with repo.config_writer() as config:
-            config.set_value("user", "name", "Test User")
-            config.set_value("user", "email", "test@example.com")
-        
-        # Cria arquivo e commit
-        test_file = Path(tmpdir) / "test.txt"
-        test_file.write_text("Initial content")
-        repo.index.add(["test.txt"])
-        repo.index.commit("Initial commit")
-        
-        # Modifica arquivo
-        test_file.write_text("Modified content")
-        repo.index.add(["test.txt"])
-        repo.index.commit("Modify test.txt")
-        
-        yield tmpdir
+    tmpdir = tempfile.mkdtemp()
+    repo = Repo.init(tmpdir)
+
+    with repo.config_writer() as config:
+        config.set_value("user", "name", "Test User")
+        config.set_value("user", "email", "test@example.com")
+
+    test_file = Path(tmpdir) / "test.txt"
+    test_file.write_text("Initial content")
+    repo.index.add(["test.txt"])
+    repo.index.commit("Initial commit")
+
+    test_file.write_text("Modified content")
+    repo.index.add(["test.txt"])
+    repo.index.commit("Modify test.txt")
+
+    yield tmpdir
+
+    repo.close()
+    gc.collect()
+    shutil.rmtree(tmpdir, ignore_errors=True)
 
 def test_git_analyzer_initialization(temp_repo):
     """Testa a inicialização do GitAnalyzer."""
