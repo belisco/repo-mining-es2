@@ -39,11 +39,12 @@ def hotspots(ctx, top):
     click.echo(report)
 
 @cli.command()
+@click.option("--top", default=10, help="Número de resultados a exibir")
 @click.pass_context
-def ownership(ctx):
+def ownership(ctx, top):
     """Identifica a quantidade de autores por arquivo."""
     calculator = ctx.obj["calculator"]
-    results = calculator.calculate_ownership()
+    results = calculator.calculate_ownership(top_n=top)
     report = ReportGenerator.format_ownership(results)
     click.echo(report)
     
@@ -58,11 +59,12 @@ def abandoned(ctx, top):
     click.echo(report)
 
 @cli.command()
+@click.option("--top", default=10, help="Número de resultados a exibir")
 @click.pass_context
-def risk(ctx):
+def risk(ctx, top):
     """Calcula o score de risco (commits × autores) por arquivo."""
     calculator = ctx.obj["calculator"]
-    results = calculator.calculate_risk_score()
+    results = calculator.calculate_risk_score(top_n=top)
     report = ReportGenerator.format_risk_score(results)
     click.echo(report)
     

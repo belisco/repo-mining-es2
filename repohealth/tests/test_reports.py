@@ -35,3 +35,13 @@ def test_format_risk_score_with_data():
     
     assert "RISK SCORE" in result
     assert "Score: 30" in result
+
+
+def test_format_abandoned_with_data():
+    """Testa formatação de abandoned files."""
+    data = [("file_a.py", 45)]
+    result = ReportGenerator.format_abandoned(data)
+    
+    assert "ABANDONED FILES" in result
+    assert "file_a.py" in result
+    assert "45 dias sem modificação" in result

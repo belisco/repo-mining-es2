@@ -60,8 +60,10 @@ def test_calculate_ownership(temp_repo_metrics):
     calculator = MetricsCalculator(analyzer)
     
     ownership = calculator.calculate_ownership()
-    
     assert len(ownership) > 0
+
+    ownership_top = calculator.calculate_ownership(top_n=1)
+    assert len(ownership_top) == 1
 
 
 def test_calculate_risk_score(temp_repo_metrics):
@@ -70,10 +72,12 @@ def test_calculate_risk_score(temp_repo_metrics):
     calculator = MetricsCalculator(analyzer)
     
     risk_scores = calculator.calculate_risk_score()
-    
     assert len(risk_scores) > 0
     for file, commits, authors, score in risk_scores:
         assert score == commits * authors
+
+    risk_scores_top = calculator.calculate_risk_score(top_n=1)
+    assert len(risk_scores_top) == 1
 
 def test_calculate_abandoned(temp_repo_metrics):
     """Testa cálculo de arquivos abandonados."""

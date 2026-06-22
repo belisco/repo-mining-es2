@@ -41,9 +41,15 @@ class MetricsCalculator:
 
         return sorted_files[:top_n]
 
-    def calculate_ownership(self) -> List[Tuple[str, int]]:
+    def calculate_ownership(
+        self,
+        top_n: int = None,
+    ) -> List[Tuple[str, int]]:
         """
         Calcula a quantidade de autores por arquivo.
+
+        Args:
+            top_n: Número de resultados a retornar
 
         Returns:
             Lista de tuplas (arquivo, quantidade_autores)
@@ -55,11 +61,15 @@ class MetricsCalculator:
             for file, authors in file_authors.items()
         ]
 
-        return sorted(
+        sorted_files = sorted(
             file_author_count,
             key=lambda x: x[1],
             reverse=True,
         )
+
+        if top_n is not None:
+            return sorted_files[:top_n]
+        return sorted_files
 
     def calculate_abandoned(
         self,
@@ -94,9 +104,13 @@ class MetricsCalculator:
 
     def calculate_risk_score(
         self,
+        top_n: int = None,
     ) -> List[Tuple[str, int, int, int]]:
         """
         Calcula o score de risco dos arquivos.
+
+        Args:
+            top_n: Número de resultados a retornar
 
         Returns:
             Lista de tuplas:
@@ -135,8 +149,12 @@ class MetricsCalculator:
                 )
             )
 
-        return sorted(
+        sorted_files = sorted(
             risk_scores,
             key=lambda x: x[3],
             reverse=True,
         )
+
+        if top_n is not None:
+            return sorted_files[:top_n]
+        return sorted_files

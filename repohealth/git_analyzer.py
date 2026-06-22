@@ -19,6 +19,9 @@ class GitAnalyzer:
         """
         self.repo_path = Path(repo_path)
         self.repo = Repo(repo_path)
+        self._file_commits = None
+        self._file_authors = None
+        self._file_last_mod = None
 
     def get_all_commits(self) -> List:
         """
@@ -27,7 +30,51 @@ class GitAnalyzer:
         Returns:
             Lista de commits
         """
-        return list(self.repo.iter_commits("--all"))
+        try:
+            return list(self.repo.iter_commits("--all"))
+        except Exception:
+            return []
+
+    def _analyze_repo(self) -> None:
+        """Executa a análise do repositório em uma única passada e armazena em cache."""
+        if self._file_commits is not None:
+            return
+
+        self._file_commits = {}
+        self._file_authors = {}
+        self._file_last_mod = {}
+
+        try:
+            commits = self.repo.iter_commits("--all")
+        except Exception:
+            return
+
+        for commit in commits:
+            try:
+                commit_date = datetime.fromtimestamp(
+                    commit.committed_date
+                )
+                author = commit.author.email
+
+                for file_path in commit.stats.files:
+                    # Contagem de commits
+                    self._file_commits[file_path] = (
+                        self._file_commits.get(file_path, 0) + 1
+                    )
+
+                    # Autores
+                    if file_path not in self._file_authors:
+                        self._file_authors[file_path] = set()
+                    self._file_authors[file_path].add(author)
+
+                    # Última modificação
+                    if (
+                        file_path not in self._file_last_mod
+                        or commit_date > self._file_last_mod[file_path]
+                    ):
+                        self._file_last_mod[file_path] = commit_date
+            except Exception:
+                continue
 
     def get_file_commit_count(self) -> Dict[str, int]:
         """
@@ -36,18 +83,8 @@ class GitAnalyzer:
         Returns:
             Dicionário {arquivo: quantidade_commits}
         """
-        file_commits = {}
-
-        for commit in self.repo.iter_commits("--all"):
-            try:
-                for file_path in commit.stats.files:
-                    file_commits[file_path] = (
-                        file_commits.get(file_path, 0) + 1
-                    )
-            except Exception:
-                continue
-
-        return file_commits
+        self._analyze_repo()
+        return self._file_commits
 
     def get_file_authors(self) -> Dict[str, Set[str]]:
         """
@@ -56,22 +93,8 @@ class GitAnalyzer:
         Returns:
             Dicionário {arquivo: set(autores)}
         """
-        file_authors = {}
-
-        for commit in self.repo.iter_commits("--all"):
-            try:
-                author = commit.author.email
-
-                for file_path in commit.stats.files:
-                    if file_path not in file_authors:
-                        file_authors[file_path] = set()
-
-                    file_authors[file_path].add(author)
-
-            except Exception:
-                continue
-
-        return file_authors
+        self._analyze_repo()
+        return self._file_authors
 
     def get_file_last_modification(self) -> Dict[str, datetime]:
         """
@@ -80,25 +103,8 @@ class GitAnalyzer:
         Returns:
             Dicionário {arquivo: datetime}
         """
-        file_last_mod = {}
-
-        for commit in self.repo.iter_commits("--all"):
-            try:
-                commit_date = datetime.fromtimestamp(
-                    commit.committed_date
-                )
-
-                for file_path in commit.stats.files:
-                    if (
-                        file_path not in file_last_mod
-                        or commit_date > file_last_mod[file_path]
-                    ):
-                        file_last_mod[file_path] = commit_date
-
-            except Exception:
-                continue
-
-        return file_last_mod
+        self._analyze_repo()
+        return self._file_last_mod
 
     def get_all_tracked_files(self) -> List[str]:
         """

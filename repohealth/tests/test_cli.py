@@ -43,6 +43,33 @@ def test_cli_hotspots_command(temp_repo_cli):
     assert "HOTSPOTS" in result.output
 
 
+def test_cli_ownership_command(temp_repo_cli):
+    """Testa comando ownership."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ["--repo", temp_repo_cli, "ownership"])
+    
+    assert result.exit_code == 0
+    assert "OWNERSHIP" in result.output
+
+
+def test_cli_abandoned_command(temp_repo_cli):
+    """Testa comando abandoned."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ["--repo", temp_repo_cli, "abandoned"])
+    
+    assert result.exit_code == 0
+    assert "ABANDONED" in result.output
+
+
+def test_cli_risk_command(temp_repo_cli):
+    """Testa comando risk."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ["--repo", temp_repo_cli, "risk"])
+    
+    assert result.exit_code == 0
+    assert "RISK SCORE" in result.output
+
+
 def test_cli_invalid_repo():
     """Testa erro com repositório inválido."""
     runner = CliRunner()
@@ -51,3 +78,16 @@ def test_cli_invalid_repo():
         
         assert result.exit_code == 1
         assert "não é um repositório Git válido" in result.output
+
+
+def test_cli_main(monkeypatch):
+    """Testa a função main do CLI."""
+    from repohealth.cli import main
+    # Mock cli call to prevent actual execution but ensure it's called
+    called = False
+    def mock_cli(*args, **kwargs):
+        nonlocal called
+        called = True
+    monkeypatch.setattr("repohealth.cli.cli", mock_cli)
+    main()
+    assert called

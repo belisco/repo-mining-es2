@@ -73,3 +73,25 @@ def test_get_file_last_modification(temp_repo):
     
     assert "test.txt" in file_last_mod
     assert file_last_mod["test.txt"] is not None
+
+
+def test_get_all_tracked_files(temp_repo):
+    """Testa a listagem de arquivos rastreados."""
+    analyzer = GitAnalyzer(temp_repo)
+    tracked = analyzer.get_all_tracked_files()
+    assert "test.txt" in tracked
+
+
+def test_git_analyzer_empty_repo():
+    """Testa o comportamento do GitAnalyzer em um repositório sem commits ou inválido."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        repo = Repo.init(tmpdir)
+        analyzer = GitAnalyzer(tmpdir)
+        
+        # Repositório inicializado mas sem commits
+        assert analyzer.get_all_commits() == []
+        assert analyzer.get_file_commit_count() == {}
+        assert analyzer.get_file_authors() == {}
+        assert analyzer.get_file_last_modification() == {}
+        
+        repo.close()
