@@ -18,6 +18,7 @@ class ReportGenerator:
 
         return "\n".join(report)
 
+
     @staticmethod
     def format_ownership(ownership: List[Tuple[str, int]]) -> str:
         report = ["OWNERSHIP"]
