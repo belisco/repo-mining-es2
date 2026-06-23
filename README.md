@@ -46,6 +46,7 @@ A ferramenta apoia a identificação dos seguintes sinais críticos:
 
 2. Instale o pacote localmente em modo editável:
    ```bash
+   cd repohealth
    pip install -e .
    ```
    *Ou instale diretamente as dependências:*
