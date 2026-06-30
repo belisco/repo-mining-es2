@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "repohealth"
 version = "1.0.0"
 description = "Ferramenta CLI para análise de saúde de repositórios Git."
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 license = { text = "MIT" }
 dependencies = [
     "gitpython>=3.1.0",
@@ -15,3 +15,9 @@ dependencies = [
 
 [project.scripts]
 repohealth = "repohealth.cli:main"
+
+[tool.setuptools]
+packages = ["repohealth", "repohealth.tests"]
+
+[tool.setuptools.package-dir]
+repohealth = "."

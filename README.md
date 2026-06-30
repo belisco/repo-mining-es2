@@ -36,7 +36,7 @@ A ferramenta apoia a identificação dos seguintes sinais críticos:
 
 ## Como Instalar
 
-**Pré-requisitos:** Python 3.12+
+**Pré-requisitos:** Python 3.11+
 
 1. Clone o repositório:
    ```bash
